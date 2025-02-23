@@ -122,5 +122,5 @@ def mandelbrot_viewer():
         gui.show()
 
 if __name__ == '__main__':
-    # gen_static_mandelbrot_set()
+    gen_static_mandelbrot_set()
     mandelbrot_viewer()
