@@ -5,10 +5,11 @@ https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set
 """
 
 import taichi as ti
-from taichi.math import cmul, dot, log2, vec2, vec3
-from numpy import linspace, array
-from scipy.interpolate import pchip_interpolate
+from numpy import array, linspace
 from PIL import Image
+from scipy.interpolate import pchip_interpolate
+from taichi.math import cmul, dot, log2, vec2, vec3
+
 ti.init(arch=ti.gpu)
 
 
@@ -23,7 +24,7 @@ def gen_static_mandelbrot_set():
         if v < 1:
             col = vec3(v**4, v**2.5, v)
         else:
-            v = ti.max(0., 2 - v)
+            v = ti.max(0.0, 2 - v)
             col = vec3(v, v**1.5, v**3)
         return col
 
@@ -44,8 +45,8 @@ def gen_static_mandelbrot_set():
 
     render()
 
-    img = Image.fromarray((255 * pixels.to_numpy()).astype('uint8')).transpose(Image.Transpose.TRANSPOSE)
-    img.show()    
+    img = Image.fromarray((255 * pixels.to_numpy()).astype("uint8")).transpose(Image.Transpose.TRANSPOSE)
+    img.show()
 
 
 def mandelbrot_viewer():
@@ -56,9 +57,9 @@ def mandelbrot_viewer():
     COLORMAP = pchip_interpolate(
         [0, 0.16, 0.42, 0.6425, 0.8575, 1],
         array([[0, 7, 100], [32, 107, 203], [237, 255, 255], [255, 170, 0], [0, 2, 0], [0, 7, 100]]) / 255,
-        linspace(0, 1, COLORMAP_SIZE)
+        linspace(0, 1, COLORMAP_SIZE),
     ).flatten()
-    
+
     zoom = 250
     center_x = -0.5
     center_y = 0
@@ -70,16 +71,15 @@ def mandelbrot_viewer():
     def iter(x, y):
         c = ti.Vector([x, y])
         z = c
-        count = 0.
-        
+        count = 0.0
+
         while count < MAX_ITER and z.norm() <= 2:
-            z = ti.Vector([z[0]**2 - z[1]**2, z[0] * z[1] * 2]) + c
+            z = ti.Vector([z[0] ** 2 - z[1] ** 2, z[0] * z[1] * 2]) + c
             count += 1.0
-        
+
         if count < MAX_ITER:
             count += 1.0 - ti.log(ti.log(ti.cast(z.norm(), ti.f32)) / ti.log(2)) / ti.log(2)
         return count
-
 
     @ti.kernel
     def paint(center_x: ti.f64, center_y: ti.f64, zoom: ti.f64, colormap: ti.types.ndarray()):
@@ -110,7 +110,7 @@ def mandelbrot_viewer():
                 zoom = zoom_new
             elif e.key == ti.GUI.SPACE:
                 # space: print info
-                print(f'center_x={center_x}, center_y={center_y}, zoom={zoom}')
+                print(f"center_x={center_x}, center_y={center_y}, zoom={zoom}")
         if gui.is_pressed(ti.GUI.LMB):
             # drag: move
             mouse_x, mouse_y = gui.get_cursor_pos()
@@ -121,6 +121,7 @@ def mandelbrot_viewer():
         gui.set_image(pixels)
         gui.show()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     gen_static_mandelbrot_set()
     mandelbrot_viewer()
