@@ -2,6 +2,7 @@
 https://www.youtube.com/watch?v=FFftmWSzgmk
 https://en.wikipedia.org/wiki/Mandelbrot_set
 https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set
+https://github.com/Y7K4/mandelbrot-viewer
 """
 
 import taichi as ti
