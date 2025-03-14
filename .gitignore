@@ -1,3 +1,6 @@
+# Taichi GUI auto-gen file
+imgui.ini
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
